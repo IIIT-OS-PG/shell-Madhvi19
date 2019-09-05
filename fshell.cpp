@@ -44,8 +44,11 @@ char** splits(char s[])
 	return command;
 }
 
-void execute(char** command)
-{	string cd="cd";
+void execute(char** command, vector<string> history)
+{	
+	string cd="cd";
+	string h="history";
+
 	pid_t pid=fork();
 	if(pid<0)
 	{
@@ -60,6 +63,15 @@ void execute(char** command)
 				cout<<"wrong path"<<endl;
 			}
 
+		}
+
+		else if(command[0]==h)
+		{
+			int len=history.size();
+			for(int i=0;i<len;i++)
+			{
+				cout<<history[i]<<endl;
+			}
 		}
 
 		else
@@ -85,13 +97,33 @@ int main()
 {	
 	clear();
 	//signal(SIGINT, sigintHandler);
-
+    vector<string> history;
 	while(1)
 	{
 		currentDir();
+		string s;
 		
+		getline(cin,s);
+		//cout<<s<<endl;
+		history.push_back(s);
+		//cout<<history[0];
+
 		char c[204];
-		cin.getline(c,204);
+		//cin.getline(c,204);
+		int len=s.length();
+		int i;
+		for(i=0;i<len;i++)
+		{
+			c[i]=s[i];
+		}
+		c[i]='\0';
+		
+
+		//cout<<s<<endl;
+		if(c[0]=='\0')
+		{
+			continue;
+		}
 
 		char** command=splits(c);
 		//cout<<command[0]<<endl;
@@ -105,7 +137,8 @@ int main()
 		}
 
 
-		execute(command);
+
+		execute(command, history);
 	}
 	return 0;
 }

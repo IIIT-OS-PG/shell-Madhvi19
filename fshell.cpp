@@ -136,11 +136,18 @@ void execute(char** command, vector<string> history)
 	{	
 
 		if(command[0]==cd)
-		{
-		
-			if (chdir(command[1])<0)
+		{	
+			string tild="~";
+			if(command[1]==tild)
 			{
-				cout<<"Wrong path"<<endl;
+				if(chdir("/home/madhvi")<0)
+					cout<<"Wrong path"<<endl;	
+			}
+
+			else
+			{
+				if(chdir(command[1])<0)
+					cout<<"Wrong path"<<endl;
 			}
 
 		}
@@ -159,7 +166,7 @@ void execute(char** command, vector<string> history)
 			}
 
 			else
-			{	cout<<"variables"<<endl;		
+			{		
 				EchoVar ev;
 				ev.echo(command);
 			}
@@ -176,12 +183,10 @@ void execute(char** command, vector<string> history)
 
 
 		else
-		{	//cout<<"execvp wala paagal"<<endl;
+		{
 			if(a.if_present(command, alia))
 			{
-				//cout<<"Finally found"<<endl;
 				a.get_command(command, alia);
-
 			}
 			else
 			{

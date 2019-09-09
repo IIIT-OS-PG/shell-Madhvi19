@@ -19,6 +19,7 @@ using namespace std;
 
 #define clear() printf("\033[H\033[J")
 Alias a;
+int exit_state;
 unordered_map<string, string> alia;
 pid_t process_id;
 bool append;
@@ -125,7 +126,9 @@ void execute(char** command, vector<string> history)
 	string dollar="$$";
 	string dq="$?";
 	string echo="echo";
+	string status="$?";
 	pid_t pid=fork();
+
 
 	if(pid<0)
 	{
@@ -141,13 +144,17 @@ void execute(char** command, vector<string> history)
 			if(command[1]==tild)
 			{
 				if(chdir("/home/madhvi")<0)
-					cout<<"Wrong path"<<endl;	
+				cout<<"Wrong path"<<endl;	
+			}
+			else if(command[1]=="13")
+			{
+				exit_state=-1;
 			}
 
 			else
 			{
 				if(chdir(command[1])<0)
-					cout<<"Wrong path"<<endl;
+				cout<<"Wrong path"<<endl;
 			}
 
 		}
@@ -155,7 +162,12 @@ void execute(char** command, vector<string> history)
 
 		else if (command[0]==dollar)
 		{
-			cout<<process_id;
+			cout<<process_id<<endl;
+		}
+
+		else if(command[0]==status)
+		{
+			cout<<exit_state<<endl;
 		}
 
 		else if(command[0]==echo)
@@ -166,7 +178,7 @@ void execute(char** command, vector<string> history)
 			}
 
 			else
-			{		
+			{
 				EchoVar ev;
 				ev.echo(command);
 			}
@@ -183,7 +195,7 @@ void execute(char** command, vector<string> history)
 
 
 		else
-		{
+		{	
 			if(a.if_present(command, alia))
 			{
 				a.get_command(command, alia);
@@ -197,9 +209,12 @@ void execute(char** command, vector<string> history)
 	}
 
 	else
-	{
-		wait(NULL);
+	{	
+		int x;
+		wait(&x);
+		exit_state=x;
 	}
+
 }
 
 int main()
@@ -218,12 +233,7 @@ int main()
 		getline(cin,s);
 		history.push_back(s);
 
-		if(s.compare(rec)==0)
-		{
-
-			//cout<<"you are being recorded";
-
-		}
+	
 		char c[204];
 		int len=s.length();
 		int i;
@@ -247,7 +257,7 @@ int main()
 		Pipes p;
 		if(p.is_pipe(s))
 		{	
-			p.exec_pipes(s);
+			exit_state=p.exec_pipes(s);
 			continue;
 		}
 		
@@ -257,6 +267,7 @@ int main()
 		{
 			if(a.check_alias(s, alia))
 			cout<<"Alias created successfully."<<endl;
+			exit_state=0;
 			continue;
 		}
 

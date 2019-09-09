@@ -19,7 +19,7 @@ public:
 		temp=command[1];
 		
 		fstream fs;
-		fs.open("my_bash.txt",ios::in);
+		fs.open("/home/madhvi/MyRepo/UnixShell/my_bash.txt",ios::in);
 		string line;
 		int i=0;
 		while(getline(fs,line))
